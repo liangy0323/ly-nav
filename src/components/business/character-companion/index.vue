@@ -1,53 +1,97 @@
 <template>
-  <video
-    v-show="!hasError"
-    ref="characterVideo"
-    class="character-companion"
-    src="https://ly-1253695189.cos.ap-shanghai.myqcloud.com/resource/character-idle-v2.webm"
-    :autoplay="!motionPreference.matches"
-    muted
-    loop
-    playsinline
-    disablepictureinpicture
-    disableremoteplayback
-    aria-hidden="true"
-    tabindex="-1"
-    @error="hasError = true"
-  />
+  <section class="character-companion" aria-label="人物动画">
+    <div class="character-companion__stage" aria-hidden="true">
+      <video
+        ref="idleVideo"
+        class="character-companion__video character-companion__video--idle"
+        :class="{ 'character-companion__video--visible': phase === 'idle' }"
+        :src="idleSource"
+        :poster="idlePoster"
+        muted
+        loop
+        playsinline
+        preload="auto"
+        disablepictureinpicture
+        disableremoteplayback
+        tabindex="-1"
+        @error="handleMediaError('idle')"
+      />
+      <video
+        ref="leaveVideo"
+        class="character-companion__video character-companion__video--leave"
+        :class="{
+          'character-companion__video--visible': phase === 'leaving',
+          'character-companion__video--flying': isFlying,
+        }"
+        :src="leaveSource"
+        muted
+        playsinline
+        preload="auto"
+        disablepictureinpicture
+        disableremoteplayback
+        tabindex="-1"
+        @ended="handleEnded('leaving')"
+        @timeupdate="handleTimeUpdate('leaving', $event)"
+        @error="handleMediaError('leaving')"
+      />
+    </div>
+    <div class="character-companion__controls">
+      <p v-if="errorMessage" class="character-companion__error" role="status">{{ errorMessage }}</p>
+      <button
+        v-if="needsPlayback"
+        class="character-companion__button"
+        type="button"
+        :disabled="isPending"
+        @click="handleRetry"
+      >
+        播放动画
+      </button>
+      <button
+        v-else-if="phase === 'idle'"
+        class="character-companion__button"
+        type="button"
+        :disabled="isPending"
+        @click="handleDismiss"
+      >
+        收起人物
+      </button>
+      <button
+        v-else-if="phase === 'hidden'"
+        class="character-companion__button"
+        type="button"
+        :disabled="isPending"
+        @click="handleSummon"
+      >
+        召回人物
+      </button>
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
+import { useCharacterPlayback } from '@/composables/use-character-playback';
+import idleSource from '@/assets/videos/character-idle.webm';
+import leaveSource from '@/assets/videos/character-leave.webm';
+import idlePoster from '@/assets/images/character-idle-poster.webp';
 
 /**
- * 右下角的透明角色装饰，不参与页面操作；媒体失败时隐藏，不影响导航功能。
+ * 使用项目内的透明视频完成循环待机与御剑离场；按钮提供收起和重新召回入口。
  */
 defineOptions({ name: 'CharacterCompanion' });
 
-const characterVideo = useTemplateRef<HTMLVideoElement>('characterVideo');
-const hasError = ref(false);
-const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-/**
- * 减少动态效果时保留静止画面；恢复播放若被浏览器拦截，继续保留画面即可。
- */
-const syncPlayback = (): void => {
-  if (motionPreference.matches) {
-    characterVideo.value?.pause();
-    return;
-  }
-  void characterVideo.value?.play().catch(() => undefined);
-};
-
-onMounted(() => {
-  syncPlayback();
-  motionPreference.addEventListener('change', syncPlayback);
-});
-
-onBeforeUnmount(() => {
-  motionPreference.removeEventListener('change', syncPlayback);
-  characterVideo.value?.pause();
-});
+const {
+  phase,
+  isFlying,
+  isPending,
+  needsPlayback,
+  errorMessage,
+  handleSummon,
+  handleDismiss,
+  handleRetry,
+  handleEnded,
+  handleTimeUpdate,
+  handleMediaError,
+} = useCharacterPlayback();
 </script>
 
 <style lang="scss" src="./index.scss" scoped></style>

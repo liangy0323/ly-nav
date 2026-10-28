@@ -130,20 +130,16 @@ This file provides guidance to AI coding agents (Codex / Claude Code 等) when w
 
 ## 三、技术栈与项目边界
 
-| 领域       | 选型                                       | 备注                                                                    |
-| ---------- | ------------------------------------------ | ----------------------------------------------------------------------- |
-| 项目       | 青屿（LY Nav）                             | 面向开发者的导航与角色陪伴页面，当前为单个前端应用                      |
-| 包管理     | pnpm 11.x                                  | Node.js >= 22.22.1，根目录通过 `packageManager` 固定版本                |
-| 前端       | Rsbuild 2 + Vue 3 + TypeScript 6           | 构建配置位于 `build/`，入口为 `src/main.ts`                             |
-| 样式       | SCSS + BEM + CSS 变量                      | `src/assets/styles` 维护色板、主题语义和基础样式                        |
-| 品牌       | 青蓝 + 暖金                                | Logo 位于 `src/assets/images/logo.png`，固定色值只在 `tokens.scss` 维护 |
-| 主题       | 默认黑色主题                               | `data-theme='dark'`；浅色变量仅预留，当前不跟随系统自动切换             |
-| UI 框架    | 暂未选择                                   | 不预置 Element Plus、Ant Design、Tailwind 或对应样式覆盖                |
-| 图标       | Lucide（`@lucide/vue`）                    | 按需导入 Vue 图标组件，不全量注册；菜单按钮使用 `Menu`                  |
-| 状态与路由 | Vue Router 已接入，Pinia 依赖预留          | 导航默认路由与 `/toools` 工具路由；尚未创建 Store                       |
-| 质量       | ESLint 10 + Prettier + Husky + lint-staged | 提交前仅处理暂存文件，全量验证使用 `pnpm check`                         |
-| 数据       | Dexie + IndexedDB                          | 导航以本地数据库为唯一数据源，初始化、增删改查和导出统一走仓储          |
-| 数据测试   | Node.js test + fake-indexeddb              | `pnpm test:storage` 验证真实仓储，不触碰浏览器用户数据                  |
+| 领域    | 选型                                       | 备注                                                     |
+| ------- | ------------------------------------------ | -------------------------------------------------------- |
+| 项目    | 青屿                                       | 当前仅保留月下水庭背景与角色，产品方向待讨论，单前端应用 |
+| 包管理  | pnpm 11.x                                  | Node.js >= 22.22.1，根目录通过 `packageManager` 固定版本 |
+| 前端    | Rsbuild 2 + Vue 3 + TypeScript 6           | 构建配置位于 `build/`，入口为 `src/main.ts`              |
+| 样式    | SCSS + BEM + CSS 变量                      | `src/assets/styles` 维护基础变量、通用配色和基础样式     |
+| 品牌    | 青蓝 + 暖金                                | 保留站点图标，固定色值只在 `tokens.scss` 维护            |
+| 配色    | 单一深色配色                               | 仅在 `:root` 定义通用变量，当前不提供多主题或主题切换    |
+| UI 框架 | 暂未选择                                   | 不预置 Element Plus、Ant Design、Tailwind 或对应样式覆盖 |
+| 质量    | ESLint 10 + Prettier + Husky + lint-staged | 提交前仅处理暂存文件，全量验证使用 `pnpm check`          |
 
 ### 硬性架构边界
 
@@ -152,12 +148,12 @@ This file provides guidance to AI coding agents (Codex / Claude Code 等) when w
 - **源码位于 `src`**：应用启动入口固定为 `src/main.ts`，根组件为 `src/App.vue`，不要将业务入口移到仓库根目录。
 - **静态资源按用途存放**：源码使用的图片放在 `src/assets/images` 并通过模块导入；站点图标等固定公开资源放在 `public`。
 - **全局样式只有一个入口**：`src/assets/styles/index.scss` 由 `src/main.ts` 引入一次；组件私有样式不进入全局聚合入口。
-- **具体颜色与主题语义分层**：固定色值放在 `tokens.scss`，浅深色映射放在 `theme.scss`；组件使用语义变量，不散落品牌色值。
-- **默认黑色主题**：以角色在 demo 中的展示验证为依据。调整默认主题或增加切换行为必须遵循用户的明确要求。
+- **基础变量与配色分层**：`tokens.scss` 只维护基础色板、字号、间距、圆角、层级和动效；`theme.scss` 仅在 `:root` 提供通用颜色语义，不预置组件专属变量。
+- **单一深色配色**：保留当前场景的深色视觉，不预留多主题或切换行为；后续扩展按用户明确要求执行。
 - **不使用样式穿透**：子组件或第三方内部 DOM 的覆盖放在具有业务 Block 作用域的全局样式模块，禁止 `:deep()` 及等价写法。
 - **环境配置保持当前范围**：只支持 development、production，当前不依赖 API 地址，不擅自恢复测试环境或后端配置。
 - **声明文件由插件维护**：`auto-imports.d.ts` 与 `components.d.ts` 不手动编辑；模块导出与私有 composable 的具体约定以对应 `.rules` 文件为准。
-- **导航数据只读本地库**：`src/storage` 管理 Dexie 实例与仓储，默认导航仅在首次初始化事务中写入；页面不得直接用默认数组兜底或覆盖用户数据。删除全部导航后保持空列表。
+- **当前业务范围**：只展示月下水庭背景和 `character-companion`，人物支持循环待机、收起离场和召回待机。两段透明视频位于 `src/assets/videos`，通过模块导入，不使用 OSS 地址。头部、导航、工具、星空、路由和本地数据功能已移除；新方向明确前不恢复其他业务。
 - **提交与推送遵循明确指令**：未要求时不创建提交；推送由用户自行执行。
 
 ---
@@ -188,13 +184,12 @@ This file provides guidance to AI coding agents (Codex / Claude Code 等) when w
 pnpm lint
 pnpm format:check
 pnpm typecheck
-pnpm test:storage
 pnpm build
 ```
 
 一次性执行全部检查：`pnpm check`。失败必须如实报告，禁止通过吞掉退出码或关闭有效规则伪装通过。
 
-数据仓储回归使用 `pnpm test:storage`，已纳入 `pnpm check`。涉及运行时交互、主题切换或离线能力时，应增加与改动相匹配的验证，并区分编译通过、内存数据库测试与真实浏览器结果。
+涉及人物播放、背景布局或离线能力时，应增加与改动相匹配的浏览器验证，并区分编译通过与真实浏览器结果。
 
 ---
 

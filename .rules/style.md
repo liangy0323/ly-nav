@@ -1,12 +1,10 @@
 # 样式规范
 
-青屿默认使用黑色主题，以修仙角色在深色背景下的展示效果为准。浅色主题仅保留变量定义，当前不提供主题切换界面，也不跟随系统自动切换。所有颜色、背景、边框、阴影、层级等 design token 优先走 CSS 变量，避免把颜色值散落在组件里。
+青屿当前使用单一深色配色，样式仅保留基础通用变量，不预留多主题、浅色配色或切换逻辑。颜色和布局尺寸优先走 CSS 变量，避免重复定义。
 
-## CSS 变量主题
+## 基础变量与通用配色
 
-通过 `data-theme` 属性预留主题切换能力：
-
-具体色值放在 `src/assets/styles/modules/tokens.scss`，主题语义变量放在 `src/assets/styles/modules/theme.scss`。
+`src/assets/styles/modules/tokens.scss` 维护基础色板、字号、间距、圆角、层级和动效；`src/assets/styles/modules/theme.scss` 仅在 `:root` 中定义通用颜色语义。
 
 ```scss
 :root {
@@ -15,7 +13,7 @@
   --palette-gold-500: #cda45e;
 }
 
-html[data-theme='dark'] {
+:root {
   --color-primary: var(--palette-teal-400);
   --color-accent: var(--palette-gold-500);
 }
@@ -23,12 +21,11 @@ html[data-theme='dark'] {
 
 规则：
 
-- HTML 初始值固定为 `data-theme='dark'`，未声明主题时由 `:root` 兜底同一套深色语义变量。
-- Logo 主色为青蓝 `#117387`，暖金点缀色为 `#CDA45E`；具体色值及深浅变体集中在 `tokens.scss`。深色主题使用更明亮的青蓝变体，保证文字与交互状态对比度。
-- 暖金装饰使用 `--color-accent`，金色文字使用 `--color-accent-text`，避免浅色背景下的可读性问题。
-- 新增主题只新增变量覆盖，不复制组件样式。
-- 组件内禁止直接写业务颜色值，除非是不可主题化的透明度、阴影或状态辅助色。
-- TypeScript 中需要切换主题时，只修改根节点 `data-theme`，不要动态改大量 class。
+- 当前不使用 `data-theme` 属性、明暗主题选择器或跟随系统的配色切换。
+- 青蓝与暖金基础色值集中在 `tokens.scss`；组件优先使用 `--color-primary`、`--color-accent` 等通用语义变量。
+- 仅保留主色、强调色、背景、文字和边框等基础配色，组件专属变量按实际需求引入。
+- 不保留已经移除的卡片、表单、弹层、骨架和状态提示变量，也不为未来功能预建色阶。
+- 组件内禁止散落业务颜色值，透明度等局部辅助值按实际需要设置。
 - CSS 变量使用通用语义命名，不使用 `--im-*` 这类项目名前缀。
 
 ---
@@ -124,7 +121,7 @@ rg ":deep\\(|::v-deep|/deep/|>>>" src
 - 页面级 Block：优先使用 `.page-<name>`
 - 业务组件 Block：优先使用 `.chat-<name>`、`.im-<name>` 等业务前缀
 - 基础组件 Block：优先使用 `.base-<name>`
-- 项目图片位于 `src/assets/images`，Logo 使用 `@/assets/images/logo.png` 导入；站点图标保留在 `public/favicon.ico`。
+- 项目图片位于 `src/assets/images`，当前背景为 `moonlit-courtyard.webp`，通过模块导入；站点图标保留在 `public/favicon.ico`。
 
 ---
 

@@ -1,23 +1,125 @@
 .character-companion {
   position: fixed;
   z-index: var(--z-index-companion);
-  right: max(var(--spacing-lg), env(safe-area-inset-right));
-  bottom: env(safe-area-inset-bottom, 0px);
-  display: block;
-  width: auto;
-  height: min(52vh, 440px);
-  height: min(52dvh, 440px);
-  max-width: calc(100vw - var(--spacing-lg) * 2);
-  object-fit: contain;
-  object-position: right bottom;
+  inset: 0;
+  /**
+   * 变换后的视频会超出画布，使用 clip 避免按钮聚焦时滚动容器并带偏人物。
+   */
+  overflow: clip;
   pointer-events: none;
-  user-select: none;
+
+  /**
+   * 显示画布最大 960×540，小于离场素材的 1280×720，避免放大后模糊。
+   * 离场按可用宽高等比缩小，待机使用独立的视口尺寸。
+   */
+  &__stage {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: min(100vw, calc(100vh * 16 / 9));
+    width: min(100vw, calc(100dvh * 16 / 9));
+    max-width: 960px;
+    aspect-ratio: 16 / 9;
+  }
+
+  &__video {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    object-fit: contain;
+    transform-origin: top left;
+    transition: opacity 220ms ease;
+    user-select: none;
+
+    &--visible {
+      opacity: 1;
+    }
+
+    &--idle {
+      position: fixed;
+      inset: auto max(var(--spacing-lg), env(safe-area-inset-right)) env(safe-area-inset-bottom, 0px) auto;
+      width: auto;
+      height: min(52vh, 440px);
+      height: min(52dvh, 440px);
+      max-width: calc(100vw - var(--spacing-lg) * 2);
+      object-position: right bottom;
+    }
+
+    &--leave {
+      transform: translate(61.4%, 57.8%) scale(0.45);
+    }
+
+    &--flying {
+      /**
+       * 缩小画布后仍飞出视口左上角，避免在画布边缘、页面中途突然消失。
+       */
+      transform: translate(calc(86% - 100vw), calc(80% - 100vh)) scale(0.45);
+      transform: translate(calc(86% - 100vw), calc(80% - 100dvh)) scale(0.45);
+      transition:
+        transform 1600ms cubic-bezier(0.55, 0, 0.85, 0.65),
+        opacity 220ms ease;
+    }
+  }
+
+  &__controls {
+    position: absolute;
+    right: max(var(--spacing-lg), env(safe-area-inset-right));
+    bottom: max(var(--spacing-lg), env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--spacing-sm);
+    max-width: calc(100% - var(--spacing-lg) * 2);
+  }
+
+  &__button {
+    min-height: 40px;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--custom-radius) * 2);
+    background: color-mix(in srgb, var(--color-bg-page) 80%, transparent);
+    color: var(--color-text-primary);
+    font: inherit;
+    cursor: pointer;
+    pointer-events: auto;
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-accent);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 3px;
+    }
+
+    &:disabled {
+      cursor: wait;
+      opacity: 0.6;
+    }
+  }
+
+  &__error {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--custom-radius);
+    background: var(--color-bg-page);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+  }
 }
 
 @media (max-width: 600px) {
-  .character-companion {
+  .character-companion__video--idle {
     right: max(var(--spacing-sm), env(safe-area-inset-right));
     height: min(34vh, 280px);
     height: min(34dvh, 280px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .character-companion__video {
+    transition: none;
   }
 }

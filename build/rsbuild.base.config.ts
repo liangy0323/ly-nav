@@ -123,12 +123,13 @@ export const getBaseConfig = (envMode = 'development'): RsbuildConfig => {
       rspack: {
         plugins: [
           /**
-           * 自动导入 Vue、Vue Router、Pinia 的运行时 API。
+           * 自动导入 Vue 的运行时 API。
            * 生成的 `auto-imports.d.ts` 只由插件维护。
            */
           AutoImport({
-            imports: ['vue', 'vue-router', 'pinia'],
+            imports: ['vue'],
             dts: resolve(process.cwd(), './auto-imports.d.ts'),
+            dtsMode: 'overwrite',
           }),
 
           /**
@@ -149,7 +150,7 @@ export const getBaseConfig = (envMode = 'development'): RsbuildConfig => {
     html: {
       template: resolve(process.cwd(), './index.html'),
       favicon: resolve(process.cwd(), './public/favicon.ico'),
-      title: '青屿导航',
+      title: '青屿',
     },
   };
 

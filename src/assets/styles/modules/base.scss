@@ -1,5 +1,5 @@
 /**
- * 统一元素盒模型并清除浏览器默认间距，保证导航页面的布局尺寸可预测。
+ * 统一元素盒模型并清除浏览器默认间距，保证场景的布局尺寸可预测。
  */
 *,
 *::before,
@@ -100,8 +100,8 @@ html {
 }
 
 body {
-  color: var(--color-text-base);
-  background: var(--body-bg-color);
+  color: var(--color-text-primary);
+  background: var(--color-bg-page);
   font-size: var(--font-size-base);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
