@@ -1,0 +1,23 @@
+.character-companion {
+  position: fixed;
+  z-index: var(--z-index-companion);
+  right: max(var(--spacing-lg), env(safe-area-inset-right));
+  bottom: env(safe-area-inset-bottom, 0px);
+  display: block;
+  width: auto;
+  height: min(52vh, 440px);
+  height: min(52dvh, 440px);
+  max-width: calc(100vw - var(--spacing-lg) * 2);
+  object-fit: contain;
+  object-position: right bottom;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 600px) {
+  .character-companion {
+    right: max(var(--spacing-sm), env(safe-area-inset-right));
+    height: min(34vh, 280px);
+    height: min(34dvh, 280px);
+  }
+}

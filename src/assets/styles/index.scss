@@ -1,0 +1,8 @@
+/**
+ * 青屿全局样式唯一入口
+ *
+ * 色板先于主题语义和基础样式加载，组件私有样式不进入此聚合入口。
+ */
+@use './modules/tokens.scss';
+@use './modules/theme.scss';
+@use './modules/base.scss';

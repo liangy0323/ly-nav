@@ -1,0 +1,113 @@
+.navigation-editor {
+  padding: var(--spacing-2xl);
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--custom-radius) * 3);
+  background: var(--color-bg-surface);
+
+  &__title {
+    margin-bottom: var(--spacing-xl);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+  }
+
+  &__fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-lg);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    min-width: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  &__optional {
+    margin-left: var(--spacing-xs);
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-xs);
+  }
+
+  &__input {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 0 var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--custom-radius) * 2);
+    background: var(--control-fill-color);
+    color: var(--color-text-primary);
+
+    &::placeholder {
+      color: var(--color-text-tertiary);
+      opacity: 1;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+
+  &__error {
+    margin-top: var(--spacing-lg);
+    color: var(--status-danger-text-color);
+    font-size: var(--font-size-sm);
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+  }
+
+  &__button {
+    min-height: 38px;
+    padding: 0 var(--spacing-lg);
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--custom-radius) * 2);
+    background: var(--control-fill-color);
+    color: var(--color-text-primary);
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--control-hover-fill-color);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 3px;
+    }
+
+    &--primary {
+      border-color: transparent;
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+
+      &:hover:not(:disabled) {
+        background: var(--color-primary-hover);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .navigation-editor {
+    &__fields {
+      grid-template-columns: 1fr;
+    }
+  }
+}

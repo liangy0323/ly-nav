@@ -1,0 +1,222 @@
+@use 'sass:list';
+@use 'sass:math';
+
+/**
+ * 保留参考背景中行星的轨道直径、星体大小和公转周期，尺寸统一相对于 640px 画布缩放。
+ */
+$planets: (
+  mercury: (
+    70,
+    4,
+    7.1867343561s,
+  ),
+  venus: (
+    100,
+    8,
+    18.4555338265s,
+  ),
+  earth: (
+    145,
+    6,
+    30s,
+  ),
+  mars: (
+    190,
+    6,
+    56.4261314589s,
+  ),
+  jupiter: (
+    340,
+    18,
+    355.7228171013s,
+  ),
+  saturn: (
+    440,
+    12,
+    882.6952471456s,
+  ),
+  uranus: (
+    520,
+    10,
+    2512.4001967933s,
+  ),
+  neptune: (
+    630,
+    10,
+    4911.7838624549s,
+  ),
+);
+
+/**
+ * 编译时生成固定分布的星点，不在运行时使用随机数；视口单位让小屏和超宽屏都能铺满星空。
+ */
+$stars: ();
+@for $index from 1 through 98 {
+  $x: math.div(($index * 137) % 1800, 18) * 1vw;
+  $y: math.div(($index * 317) % 1800, 18) * 1vh;
+  $brightness: (20 + ($index * 37) % 80) * 1%;
+  $stars: list.append($stars, $x $y 0 0 color-mix(in srgb, var(--color-star) $brightness, transparent), comma);
+}
+
+.starry-background {
+  position: fixed;
+  z-index: var(--z-index-background);
+  inset: 0;
+  overflow: hidden;
+  background: radial-gradient(ellipse at bottom, var(--color-bg-cosmos-start) 0%, var(--color-bg-cosmos-end) 100%);
+  pointer-events: none;
+  user-select: none;
+
+  &::after {
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: var(--color-star);
+    box-shadow: $stars;
+    content: '';
+  }
+
+  &__solar-system {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: clamp(16px, 4vw, 64px);
+    width: min(640px, calc(100vw - 32px), 80vh);
+    width: min(640px, calc(100vw - 32px), 80dvh);
+    aspect-ratio: 1;
+    transform: translateY(-50%);
+  }
+
+  &__sun,
+  &__orbit,
+  &__asteroid-belt {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &__sun {
+    width: 6.25%;
+    height: 6.25%;
+    background: radial-gradient(
+      ellipse at center,
+      var(--color-sun-core) 1%,
+      var(--color-sun-middle) 39%,
+      var(--color-sun-edge) 100%
+    );
+    box-shadow:
+      0 0 10px 2px color-mix(in srgb, var(--color-sun-edge) 40%, transparent),
+      0 0 22px 11px color-mix(in srgb, var(--color-sun-core) 13%, transparent);
+  }
+
+  &__orbit {
+    border: 1px solid color-mix(in srgb, var(--color-orbit) 12%, transparent);
+    animation: starry-background-orbit var(--orbit-duration) linear infinite;
+
+    &::before {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: var(--planet-size);
+      height: var(--planet-size);
+      border-radius: 50%;
+      background: var(--planet-color);
+      box-shadow: inset 0 6px 0 -2px color-mix(in srgb, var(--palette-black) 25%, transparent);
+      transform: translate(-50%, -50%);
+      content: '';
+    }
+
+    @each $name, $planet in $planets {
+      &--#{$name} {
+        --orbit-duration: #{list.nth($planet, 3)};
+        --planet-size: #{math.percentage(math.div(list.nth($planet, 2), list.nth($planet, 1)))};
+        --planet-color: var(--color-planet-#{$name});
+
+        width: math.percentage(math.div(list.nth($planet, 1), 640));
+        height: math.percentage(math.div(list.nth($planet, 1), 640));
+      }
+    }
+
+    &--earth::after {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: math.percentage(math.div(18, 145));
+      height: math.percentage(math.div(18, 145));
+      border-radius: 50%;
+      box-shadow: 0 -10px 0 -8px var(--color-moon);
+      animation: starry-background-orbit 2.2440352158s linear infinite;
+      content: '';
+    }
+
+    &--saturn::after {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 4.676%;
+      height: 2.34%;
+      border-radius: 50%;
+      box-shadow:
+        0 1px 0 1px var(--color-planet-ring),
+        3px 1px 0 var(--color-planet-ring),
+        -3px 1px 0 var(--color-planet-ring);
+      transform: translate(-50%, -50%) rotate(-52deg);
+      content: '';
+    }
+  }
+
+  &__asteroid-belt {
+    width: 46.875%;
+    height: 46.875%;
+    opacity: 0.7;
+    animation: starry-background-orbit 179.9558282773s linear infinite;
+
+    /**
+     * 小行星使用径向渐变散布在环带中，避免旋转大面积的多重阴影。
+     */
+    background:
+      radial-gradient(circle at 18% 42%, var(--color-star) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 28% 80%, var(--color-star) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 48% 7%, var(--color-star) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 87% 32%, var(--color-star) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 82% 74%, var(--color-star) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 58% 90%, var(--color-star) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 10% 65%, var(--color-star) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 70% 14%, var(--color-star) 0 1px, transparent 1.5px);
+  }
+}
+
+@keyframes starry-background-orbit {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .starry-background {
+    &__solar-system {
+      left: -8vw;
+      width: min(90vw, 460px, 65vh);
+      width: min(90vw, 460px, 65dvh);
+      opacity: 0.6;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .starry-background {
+    &__orbit,
+    &__orbit::after,
+    &__asteroid-belt {
+      animation: none;
+    }
+  }
+}

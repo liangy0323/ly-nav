@@ -1,0 +1,210 @@
+.page-navigation {
+  padding: var(--spacing-xl) 30px 200px;
+
+  &__header,
+  &__heading,
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  &__header {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+  }
+
+  &__count {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    min-height: 40px;
+    padding: 0 var(--spacing-lg);
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--custom-radius) * 2);
+    background: var(--control-fill-color);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--control-hover-fill-color);
+    }
+
+    &--primary {
+      border-color: transparent;
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+
+      &:hover:not(:disabled) {
+        background: var(--color-primary-hover);
+      }
+    }
+  }
+
+  &__editor {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(140px, 100%), 1fr));
+    gap: var(--spacing-xl) var(--spacing-md);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    min-width: 0;
+  }
+
+  &__item-actions {
+    display: flex;
+    justify-content: flex-end;
+    min-height: 32px;
+  }
+
+  &__icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--custom-radius);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--control-hover-fill-color);
+      color: var(--color-primary);
+    }
+  }
+
+  &__confirmation {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    min-height: 32px;
+    font-size: var(--font-size-xs);
+  }
+
+  &__text-button {
+    padding: var(--spacing-xs) 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: inherit;
+    cursor: pointer;
+
+    &--danger {
+      color: var(--status-danger-text-color);
+    }
+  }
+
+  &__button,
+  &__icon-button,
+  &__text-button {
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 3px;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__state {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-2xl) 0;
+    color: var(--color-text-secondary);
+  }
+
+  &__error {
+    margin-bottom: var(--spacing-lg);
+    color: var(--status-danger-text-color);
+    font-size: var(--font-size-sm);
+  }
+
+  &__skeleton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    min-height: 148px;
+    border: 1px solid var(--color-border-card);
+    border-radius: calc(var(--custom-radius) * 3);
+    background: var(--color-bg-card);
+  }
+
+  &__skeleton-icon,
+  &__skeleton-title,
+  &__skeleton-description {
+    display: block;
+    border-radius: var(--custom-radius);
+    background: var(--color-skeleton);
+    animation: page-navigation-pulse 1.4s ease-in-out infinite alternate;
+  }
+
+  &__skeleton-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: calc(var(--custom-radius) * 2);
+  }
+
+  &__skeleton-title {
+    width: 64px;
+    height: 12px;
+  }
+
+  &__skeleton-description {
+    width: 96px;
+    height: 10px;
+  }
+}
+
+@keyframes page-navigation-pulse {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-navigation {
+    &__skeleton-icon,
+    &__skeleton-title,
+    &__skeleton-description {
+      animation: none;
+    }
+  }
+}
