@@ -24,9 +24,10 @@ export const getBaseConfig = (envMode = 'development'): RsbuildConfig => {
   const env = loadAdminEnv(envMode);
 
   /**
-   * 管理后台当前部署在站点根路径；调整部署子路径时必须同步影响静态资源、版本清单和 Worker 作用域。
+   * 生产环境发布到 GitHub Pages 的 /ly-nav/ 子路径，开发环境保留根路径。
+   * 静态资源、版本清单和 Service Worker 作用域共用此前缀，避免部署后请求站点根目录。
    */
-  const assetPrefix = '/';
+  const assetPrefix = env.appEnv === 'production' ? '/ly-nav/' : '/';
   const isDev: boolean = env.appEnv === 'development' || process.env.PLAYWRIGHT_TEST === '1';
 
   /**

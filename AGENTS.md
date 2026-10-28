@@ -140,6 +140,7 @@ This file provides guidance to AI coding agents (Codex / Claude Code 等) when w
 | 配色    | 单一深色配色                               | 仅在 `:root` 定义通用变量，当前不提供多主题或主题切换    |
 | UI 框架 | 暂未选择                                   | 不预置 Element Plus、Ant Design、Tailwind 或对应样式覆盖 |
 | 质量    | ESLint 10 + Prettier + Husky + lint-staged | 提交前仅处理暂存文件，全量验证使用 `pnpm check`          |
+| 发布    | GitHub Pages + gh-pages                    | 生产路径 `/ly-nav/`，用户手动运行 `pnpm run deploy`      |
 
 ### 硬性架构边界
 

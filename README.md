@@ -49,9 +49,26 @@ pnpm typecheck    # Vue 与 TypeScript 类型检查
 pnpm build        # 类型检查与生产构建
 pnpm preview      # 本地预览生产产物
 pnpm check        # 执行全部检查
+pnpm run deploy   # 构建并推送 dist 到远程 gh-pages 分支
 ```
 
 保留 Husky 与 lint-staged，提交前仅检查暂存文件；提交和推送按用户明确要求执行。
+
+## GitHub Pages 发布
+
+生产环境资源前缀为 `/ly-nav/`，开发环境仍使用 `/`。静态资源、版本清单和 Service Worker 路径跟随此前缀。
+
+在项目根目录手动执行：
+
+```bash
+pnpm run deploy
+```
+
+该命令先执行 `pnpm build`，成功后使用 `gh-pages` 将 `dist` 内容提交并推送到当前仓库 `origin` 的 `gh-pages` 分支，同时生成 `.nojekyll`。它不会提交或推送 `main` 分支的源码修改；源码需要另行提交和推送。使用 `pnpm run deploy`，避免与 pnpm 内置的 `deploy` 命令混淆。
+
+首次发布成功后，在仓库 **Settings → Pages** 中选择 **Deploy from a branch**，分支选择 **gh-pages**，目录选择 **/ (root)**，保存即可。
+
+默认访问地址：<https://liangy0323.github.io/ly-nav/>。后续更新仍手动执行同一发布命令，未配置自动部署。
 
 ## 基础能力
 
